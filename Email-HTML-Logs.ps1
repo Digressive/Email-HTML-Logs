@@ -1,10 +1,10 @@
-﻿# ----------------------------------------------------------------------------
-# Script: Email-HTML-Logs
+﻿# ---------------------------------------------------------------------------------------
+# Script: Email HTML Logs
 # Version: 1.0
-# Author: Mike Galvin twitter.com/mikegalvin_ & Dan Price twitter.com/therezin
-# Based on code by Bhavik Solanki
-# Date: 28/07/2017
-# ----------------------------------------------------------------------------
+# Author: Mike Galvin & Dan Price twitter.com/therezin, based on code by Bhavik Solanki
+# Contact: mike@gal.vin or twitter.com/mikegalvin_
+# Date: 2019-08-19
+# ---------------------------------------------------------------------------------------
 
 # Set up command line switches and what variables they map to
 Param(
