@@ -1,13 +1,17 @@
 ﻿# ---------------------------------------------------------------------------------------
 # Script: Email HTML Logs
 # Version: 1.0
-# Author: Mike Galvin & Dan Price twitter.com/therezin, based on code by Bhavik Solanki
+# Author: Mike Galvin & Dan Price (twitter.com/therezin), based on code by Bhavik Solanki
 # Contact: mike@gal.vin or twitter.com/mikegalvin_
 # Date: 2019-08-19
 # ---------------------------------------------------------------------------------------
 
 # Set up command line switches and what variables they map to
 Param(
+    [alias("files")]
+    $HtmlFiles,
+    [alias("subject")]
+    $MailSubject,
     [alias("sendto")]
     $MailTo,
     [alias("from")]
@@ -20,10 +24,7 @@ Param(
     $smtpPwd,
     [switch]$Usessl)
 
-$HtmlFiles = "C:\MoodleScripts\_msm_cron\*.html"
-
 # If email was configured, set the variables for the email subject and body
-$MailSubject = "Moodle Sync Logs"
 If ($smtpServer)
 {
     $MailBody = Get-Content -Path $HtmlFiles | Out-String
