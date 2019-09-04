@@ -1,32 +1,38 @@
 ﻿# ---------------------------------------------------------------------------------------
 # Script: Email HTML Logs
-# Version: 1.0
+# Version: 1.1
 # Author: Mike Galvin & Dan Price (twitter.com/therezin), based on code by Bhavik Solanki
 # Contact: mike@gal.vin or twitter.com/mikegalvin_
-# Date: 2019-08-19
+# Date: 2019-09-04
 # ---------------------------------------------------------------------------------------
 
 # Set up command line switches and what variables they map to
 Param(
-    [alias("files")]
+    [alias("Files")]
     $HtmlFiles,
-    [alias("subject")]
+    [alias("Subject")]
     $MailSubject,
-    [alias("sendto")]
+    [alias("SendTo")]
     $MailTo,
-    [alias("from")]
+    [alias("From")]
     $MailFrom,
-    [alias("smtp")]
+    [alias("Smtp")]
     $smtpServer,
-    [alias("user")]
+    [alias("User")]
     $smtpUser,
-    [alias("pwd")]
+    [alias("Pwd")]
     $smtpPwd,
-    [switch]$Usessl)
+    [switch]$UseSsl)
 
 # If email was configured, set the variables for the email subject and body
 If ($smtpServer)
 {
+    # If no subject is set, use the string below
+    If ($Null -eq $MailSubject)
+    {
+        $MailSubject = "HTML Logs"
+    }
+
     $MailBody = Get-Content -Path $HtmlFiles | Out-String
 
     # If an email password was configured, create a variable with the username and password
