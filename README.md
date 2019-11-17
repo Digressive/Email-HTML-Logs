@@ -21,22 +21,6 @@ After running the commands, you will have a text file containing the encrypted p
 
 Here’s a list of all the command line switches and example configurations.
 
-    [alias("files")]
-    $HtmlFiles,
-    [alias("subject")]
-    $MailSubject,
-    [alias("sendto")]
-    $MailTo,
-    [alias("from")]
-    $MailFrom,
-    [alias("smtp")]
-    $smtpServer,
-    [alias("user")]
-    $smtpUser,
-    [alias("pwd")]
-    $smtpPwd,
-    [switch]$Usessl)
-
 ``` txt
 -Files
 ```
