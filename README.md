@@ -27,7 +27,7 @@ Please consider supporting my work:
 
 Email HTML Logs Utility can also be downloaded from:
 
-* [The Microsoft PowerShell Gallery](https://www.powershellgallery.com)
+* [The Microsoft PowerShell Gallery](https://www.powershellgallery.com/packages/Email-HTML-Logs)
 
 Tweet me if you have questions: [@mikegalvin_](https://twitter.com/mikegalvin_)
 
