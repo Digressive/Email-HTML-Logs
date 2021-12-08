@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 21.12.08
+.VERSION 21.12.08a
 
 .GUID 566309af-d0f7-4bf6-8303-b903553af661
 
@@ -132,7 +132,7 @@ If ($NoBanner -eq $False)
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                __/ |                            __/ |              "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "               |___/                            |___/               "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                    "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "     Mike Galvin   https://gal.vin   Version 21.12.08               "
+    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "     Mike Galvin   https://gal.vin   Version 21.12.08a              "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                    "
     Write-Host -Object ""
 }
@@ -223,7 +223,7 @@ $OSV = "$OSVMaj" + "." + "$OSVMin" + "." + "$OSVBui"
 ##
 
 Write-Log -Type Conf -Evt "************ Running with the following config *************."
-Write-Log -Type Conf -Evt "Utility Version:.......21.12.08"
+Write-Log -Type Conf -Evt "Utility Version:.......21.12.08a"
 Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
 Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
 Write-Log -Type Conf -Evt "File path:.............$HtmlFiles."
@@ -275,11 +275,11 @@ else {
 
 If ($SmtpPort)
 {
-    Write-Log -Type Conf -Evt "SMTP Port:...............$SmtpPort."
+    Write-Log -Type Conf -Evt "SMTP Port:.............$SmtpPort."
 }
 
 else {
-    Write-Log -Type Conf -Evt "SMTP Port:...............Default"
+    Write-Log -Type Conf -Evt "SMTP Port:.............Default"
 }
 
 If ($SmtpUser)

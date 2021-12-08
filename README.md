@@ -17,7 +17,7 @@ Send HTML logs as e-mail
               __/ |                            __/ |
              |___/                            |___/
 
-     Mike Galvin   https://gal.vin   Version 21.12.08
+     Mike Galvin   https://gal.vin   Version 21.12.08a
 ```
 
 Please consider supporting my work:
