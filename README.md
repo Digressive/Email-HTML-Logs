@@ -17,7 +17,7 @@ Send HTML logs as e-mail
               __/ |                            __/ |
              |___/                            |___/
 
-     Mike Galvin   https://gal.vin   Version 20.03.19
+     Mike Galvin   https://gal.vin   Version 21.12.08
 ```
 
 Please consider supporting my work:
@@ -59,21 +59,21 @@ Here’s a list of all the command line switches and example configurations.
 
 | Command Line Switch | Description | Example |
 | ------------------- | ----------- | ------- |
-| -Files | The root path that contains the files to email, can use wildcards. | C:\foo\logs\*.html |
-| -L | The path to output the log file to. The file name will be Email-HTML_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | C:\scripts\logs |
+| -Files | The root path that contains the files to email, can use wildcards. | ```C:\foo\logs\*.html``` |
+| -L | The path to output the log file to. The file name will be Email-HTML_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | ```C:\scripts\logs``` |
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
 | -Subject | The subject line for the e-mail log. Encapsulate with single or double quotes. If no subject is specified, the default of "Email HTML Logs Utility" will be used. | 'Server: Notification' |
 | -SendTo | The e-mail address the log should be sent to. | me@contoso.com |
 | -From | The e-mail address the log should be sent from. | HTML-Logs@contoso.com |
 | -Smtp | The DNS name or IP address of the SMTP server. | smtp.live.com OR smtp.office365.com |
 | -User | The user account to authenticate to the SMTP server. | example@contoso.com |
-| -Pwd | The txt file containing the encrypted password for SMTP authentication. | C:\scripts\ps-script-pwd.txt |
+| -Pwd | The txt file containing the encrypted password for SMTP authentication. | ```C:\scripts\ps-script-pwd.txt``` |
 | -UseSsl | Configures the utility to connect to the SMTP server using SSL. | N/A |
 
 ### Example
 
 ``` txt
-Email-HTML-Logs.ps1 -Files C:\foo\logs\*.html -L C:\scripts\logs -Subject 'Server: HTML Logs' -SendTo me@contoso.com -From HTML-Logs@contoso.com -Smtp smtp.outlook.com -User me@contoso.com -Pwd C:\foo\pwd.txt -UseSsl
+Email-HTML-Logs.ps1 -Files C:\foo\logs\*.html -L C:\scripts\logs -Subject 'Server: HTML Logs' -SendTo me@contoso.com -From HTML-Logs@contoso.com -Smtp smtp.outlook.com -User me@contoso.com -Pwd c:\scripts\ps-script-pwd.txt -UseSsl
 ```
 
-The above command will get log files with the html extension from the folder C:\foo\logs and then email them using an SSL connection. A log file will be output to C:\scripts\logs.
+The above command will get log files with the html extension from the folder ```C:\foo\logs``` and then email them using an SSL connection. A log file will be output to ```C:\scripts\logs```.
