@@ -37,8 +37,8 @@ Join the [Discord](http://discord.gg/5ZsnJ5k) or Tweet me if you have questions:
 
 * Send the contents of HTML files as the body in e-mails.
 * Useful for applications that output HTML logs with no e-mail option.
-
-This utility has been tested on Windows 10, Windows Server 2019, Windows Server 2016 and Windows Server 2012 R2 (Datacenter and Core Installations).
+* The utility requires at least PowerShell 5.0.
+* This utility has been tested on Windows 10, Windows Server 2019, Windows Server 2016 and Windows Server 2012 R2 (Datacenter and Core Installations).
 
 ### Generating A Password File
 
