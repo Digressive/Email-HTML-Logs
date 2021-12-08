@@ -68,6 +68,9 @@
     .PARAMETER Smtp
     The DNS name or IP address of the SMTP server.
 
+    .PARAMETER Port
+    The Port that should be used for the SMTP server.
+
     .PARAMETER User
     The user account to authenticate to the SMTP server.
 
@@ -101,6 +104,8 @@ Param(
     $MailFrom,
     [alias("Smtp")]
     $SmtpServer,
+    [alias("Port")]
+    $SmtpPort,
     [alias("User")]
     $SmtpUser,
     [alias("Pwd")]
@@ -337,16 +342,16 @@ If ($LogPath)
             ## If it isn't then don't use SSL, but still authenticate with the credentials.
             If ($UseSsl)
             {
-                Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -UseSsl -Credential $SmtpCreds
+                Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort -UseSsl -Credential $SmtpCreds
             }
 
             else {
-                Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Credential $SmtpCreds
+                Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort -Credential $SmtpCreds
             }
         }
 
         else {
-            Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer
+            Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort
         }
     }
 }
