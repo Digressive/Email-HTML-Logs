@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 21.12.08.01
+.VERSION 22.06.02
 
 .GUID 566309af-d0f7-4bf6-8303-b903553af661
 
@@ -132,7 +132,7 @@ If ($NoBanner -eq $False)
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                __/ |                            __/ |              "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "               |___/                            |___/               "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                    "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "     Mike Galvin   https://gal.vin   Version 21.12.08.01            "
+    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "     Mike Galvin   https://gal.vin   Version 22.06.02            "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                    "
     Write-Host -Object ""
 }
@@ -152,14 +152,10 @@ If ($LogPath)
     $LogFile = ("Email-HTML-Logs_{0:yyyy-MM-dd_HH-mm-ss}.log" -f (Get-Date))
     $Log = "$LogPath\$LogFile"
 
-    $LogT = Test-Path -Path $Log
-
-    If ($LogT)
+    If (Test-Path -Path $Log)
     {
         Clear-Content -Path $Log
     }
-
-    Add-Content -Path $Log -Encoding ASCII -Value "$(Get-Date -Format "yyyy-MM-dd HH:mm:ss") [INFO] Log started"
 }
 
 ## Function to get date in specific format.
@@ -223,7 +219,7 @@ $OSV = "$OSVMaj" + "." + "$OSVMin" + "." + "$OSVBui"
 ##
 
 Write-Log -Type Conf -Evt "************ Running with the following config *************."
-Write-Log -Type Conf -Evt "Utility Version:.......21.12.08.01"
+Write-Log -Type Conf -Evt "Utility Version:.......22.06.02"
 Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
 Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
 Write-Log -Type Conf -Evt "File path:.............$HtmlFiles."
@@ -233,17 +229,9 @@ If ($Null -ne $LogPath)
     Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
 }
 
-else {
-    Write-Log -Type Conf -Evt "Logs directory:........No Config"
-}
-
 If ($MailTo)
 {
     Write-Log -Type Conf -Evt "E-mail log to:.........$MailTo."
-}
-
-else {
-    Write-Log -Type Conf -Evt "E-mail log to:.........No Config"
 }
 
 If ($MailFrom)
@@ -251,17 +239,9 @@ If ($MailFrom)
     Write-Log -Type Conf -Evt "E-mail log from:.......$MailFrom."
 }
 
-else {
-    Write-Log -Type Conf -Evt "E-mail log from:.......No Config"
-}
-
 If ($MailSubject)
 {
     Write-Log -Type Conf -Evt "E-mail subject:........$MailSubject."
-}
-
-else {
-    Write-Log -Type Conf -Evt "E-mail subject:........Default"
 }
 
 If ($SmtpServer)
@@ -269,17 +249,9 @@ If ($SmtpServer)
     Write-Log -Type Conf -Evt "SMTP server is:........$SmtpServer."
 }
 
-else {
-    Write-Log -Type Conf -Evt "SMTP server is:........No Config"
-}
-
 If ($SmtpPort)
 {
     Write-Log -Type Conf -Evt "SMTP Port:.............$SmtpPort."
-}
-
-else {
-    Write-Log -Type Conf -Evt "SMTP Port:.............Default"
 }
 
 If ($SmtpUser)
@@ -287,17 +259,9 @@ If ($SmtpUser)
     Write-Log -Type Conf -Evt "SMTP user is:..........$SmtpUser."
 }
 
-else {
-    Write-Log -Type Conf -Evt "SMTP user is:..........No Config"
-}
-
 If ($SmtpPwd)
 {
     Write-Log -Type Conf -Evt "SMTP pwd file:.........$SmtpPwd."
-}
-
-else {
-    Write-Log -Type Conf -Evt "SMTP pwd file:.........No Config"
 }
 
 Write-Log -Type Conf -Evt "-UseSSL switch is:.....$UseSsl."
@@ -311,8 +275,6 @@ Write-Log -Type Info -Evt "Process started"
 ## If logging is configured then finish the log file.
 If ($LogPath)
 {
-    Add-Content -Path $Log -Encoding ASCII -Value "$(Get-Date -Format "yyyy-MM-dd HH:mm:ss") [INFO] Log finished"
-
     ## This whole block is for e-mail, if it is configured.
     If ($SmtpServer)
     {
