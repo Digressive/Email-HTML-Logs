@@ -54,6 +54,12 @@
     The file name will be Email-HTML_YYYY-MM-dd_HH-mm-ss.log
     Do not add a trailing \ backslash.
 
+    .PARAMETER LogRotate
+    Instructs the utility to remove logs older than a specified number of days.
+
+    .PARAMETER Help
+    Show usage help in the command line.
+
     .PARAMETER Subject
     The subject line for the e-mail log.
     Encapsulate with single or double quotes.
@@ -96,6 +102,8 @@ Param(
     $HtmlFiles,
     [alias("L")]
     $LogPath,
+    [alias("LogRotate")]
+    $LogHistory,
     [alias("Subject")]
     $MailSubject,
     [alias("SendTo")]
@@ -112,208 +120,256 @@ Param(
     [ValidateScript({Test-Path -Path $_ -PathType Leaf})]
     $SmtpPwd,
     [switch]$UseSsl,
+    [switch]$Help,
     [switch]$NoBanner)
 
 If ($NoBanner -eq $False)
 {
-    Write-Host -Object ""
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                    "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "   ______                      _ _   _    _ _______ __  __ _        "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  |  ____|                    (_) | | |  | |__   __|  \/  | |       "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  | |__ ______ _ __ ___   __ _ _| | | |__| |  | |  | \  / | |       "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  |  __|______| '_   _ \ / _  | | | |  __  |  | |  | |\/| | |       "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  | |____     | | | | | | (_| | | | | |  | |  | |  | |  | | |____   "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  |______|    |_| |_| |_|\__,_|_|_| |_| _|_|_ |_|  |_|  |_|______|  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  | |                     | |  | | | (_) (_) |                      "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  | |     ___   __ _ ___  | |  | | |_ _| |_| |_ _   _               "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  | |    / _ \ / _  / __| | |  | | __| | | | __| | | |              "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  | |___| (_) | (_| \__ \ | |__| | |_| | | | |_| |_| |              "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  |______\___/ \__, |___/  \____/ \__|_|_|_|\__|\__, |              "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                __/ |                            __/ |              "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "               |___/                            |___/               "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                    "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "     Mike Galvin   https://gal.vin   Version 22.06.02            "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                    "
-    Write-Host -Object ""
+    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "
+         ______                      _ _   _    _ _______ __  __ _                   
+        |  ____|                    (_) | | |  | |__   __|  \/  | |                  
+        | |__ ______ _ __ ___   __ _ _| | | |__| |  | |  | \  / | |                  
+        |  __|______| '_   _ \ / _  | | | |  __  |  | |  | |\/| | |                  
+        | |____     | | | | | | (_| | | | | |  | |  | |  | |  | | |____              
+        |______|    |_| |_| |_|\__,_|_|_| |_| _|_|_ |_|  |_|  |_|______|             
+        | |                     | |  | | | (_) (_) |                                 
+        | |     ___   __ _ ___  | |  | | |_ _| |_| |_ _   _                          
+        | |    / _ \ / _  / __| | |  | | __| | | | __| | | |        Mike Galvin      
+        | |___| (_) | (_| \__ \ | |__| | |_| | | | |_| |_| |      https://gal.vin    
+        |______\___/ \__, |___/  \____/ \__|_|_|_|\__|\__, |                         
+                      __/ |                            __/ |     Version 22.06.02    
+                     |___/                            |___/     See -help for usage  
+                                                                                     
+                       Donate: https://www.paypal.me/digressive                      
+"
 }
 
-## If logging is configured, start logging.
-## If the log file already exists, clear it.
-If ($LogPath)
+
+If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
-    ## Make sure the log directory exists.
-    $LogPathFolderT = Test-Path $LogPath
+    Write-Host -Object "Usage:
+    From a terminal run: [path\]Office-Update.ps1 -Office [path\]Office365 -Config config-365-x64.xml -Days 30
+    This will update the office installation files in the specified directory, and delete update files older than 30 days
 
-    If ($LogPathFolderT -eq $False)
-    {
-        New-Item $LogPath -ItemType Directory -Force | Out-Null
-    }
+    To output a log: -L [path]. To remove logs produced by the utility older than X days: -LogRotate [number].
+    Run with no ASCII banner: -NoBanner
 
-    $LogFile = ("Email-HTML-Logs_{0:yyyy-MM-dd_HH-mm-ss}.log" -f (Get-Date))
-    $Log = "$LogPath\$LogFile"
+    To use the 'email log' function:
+    Specify the subject line with -Subject ""'[subject line]'"" If you leave this blank a default subject will be used
+    Make sure to encapsulate it with double & single quotes as per the example for Powershell to read it correctly.
+    Specify the 'to' address with -SendTo [example@contoso.com]
+    Specify the 'from' address with -From [example@contoso.com]
+    Specify the SMTP server with -Smtp [smtp server name]
+    Specify the port to use with the SMTP server with -Port [port number].
+    If none is specified then the default of 25 will be used.
+    Specify the user to access SMTP with -User [example@contoso.com]
+    Specify the password file to use with -Pwd [path\]ps-script-pwd.txt.
+    Use SSL for SMTP server connection with -UseSsl.
 
-    If (Test-Path -Path $Log)
-    {
-        Clear-Content -Path $Log
-    }
+    To generate an encrypted password file run the following commands
+    on the computer and the user that will run the script:
+"
+    Write-Host -Object '    $creds = Get-Credential
+    $creds.Password | ConvertFrom-SecureString | Set-Content [path\]ps-script-pwd.txt'
 }
 
-## Function to get date in specific format.
-Function Get-DateFormat
-{
-    Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-}
-
-## Function for logging.
-Function Write-Log($Type, $Evt)
-{
-    If ($Type -eq "Info")
+else {
+    ## If logging is configured, start logging.
+    ## If the log file already exists, clear it.
+    If ($LogPath)
     {
-        If ($Null -ne $LogPath)
+        ## Make sure the log directory exists.
+        If ((Test-Path -Path $LogPath) -eq $False)
         {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [INFO] $Evt"
-        }
-        
-        Write-Host -Object "$(Get-DateFormat) [INFO] $Evt"
-    }
-
-    If ($Type -eq "Succ")
-    {
-        If ($Null -ne $LogPath)
-        {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [SUCCESS] $Evt"
+            New-Item $LogPath -ItemType Directory -Force | Out-Null
         }
 
-        Write-Host -ForegroundColor Green -Object "$(Get-DateFormat) [SUCCESS] $Evt"
+        $LogFile = ("Email-HTML-Logs_{0:yyyy-MM-dd_HH-mm-ss}.log" -f (Get-Date))
+        $Log = "$LogPath\$LogFile"
+
+        If (Test-Path -Path $Log)
+        {
+            Clear-Content -Path $Log
+        }
     }
 
-    If ($Type -eq "Err")
+    ## Function to get date in specific format.
+    Function Get-DateFormat
     {
-        If ($Null -ne $LogPath)
+        Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    }
+
+    ## Function for logging.
+    Function Write-Log($Type, $Evt)
+    {
+        If ($Type -eq "Info")
         {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [ERROR] $Evt"
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [INFO] $Evt"
+            }
+            
+            Write-Host -Object "$(Get-DateFormat) [INFO] $Evt"
         }
 
-        Write-Host -ForegroundColor Red -BackgroundColor Black -Object "$(Get-DateFormat) [ERROR] $Evt"
-    }
-
-    If ($Type -eq "Conf")
-    {
-        If ($Null -ne $LogPath)
+        If ($Type -eq "Succ")
         {
-            Add-Content -Path $Log -Encoding ASCII -Value "$Evt"
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [SUCCESS] $Evt"
+            }
+
+            Write-Host -ForegroundColor Green -Object "$(Get-DateFormat) [SUCCESS] $Evt"
         }
 
-        Write-Host -ForegroundColor Cyan -Object "$Evt"
+        If ($Type -eq "Err")
+        {
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [ERROR] $Evt"
+            }
+
+            Write-Host -ForegroundColor Red -BackgroundColor Black -Object "$(Get-DateFormat) [ERROR] $Evt"
+        }
+
+        If ($Type -eq "Conf")
+        {
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$Evt"
+            }
+
+            Write-Host -ForegroundColor Cyan -Object "$Evt"
+        }
     }
-}
 
-## getting Windows Version info
-$OSVMaj = [environment]::OSVersion.Version | Select-Object -expand major
-$OSVMin = [environment]::OSVersion.Version | Select-Object -expand minor
-$OSVBui = [environment]::OSVersion.Version | Select-Object -expand build
-$OSV = "$OSVMaj" + "." + "$OSVMin" + "." + "$OSVBui"
+    ## getting Windows Version info
+    $OSVMaj = [environment]::OSVersion.Version | Select-Object -expand major
+    $OSVMin = [environment]::OSVersion.Version | Select-Object -expand minor
+    $OSVBui = [environment]::OSVersion.Version | Select-Object -expand build
+    $OSV = "$OSVMaj" + "." + "$OSVMin" + "." + "$OSVBui"
 
-##
-## Display the current config and log if configured.
-##
+    ##
+    ## Display the current config and log if configured.
+    ##
+    Write-Log -Type Conf -Evt "************ Running with the following config *************."
+    Write-Log -Type Conf -Evt "Utility Version:.......22.06.02"
+    Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
+    Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
+    If ($HtmlFiles)
+    {
+        Write-Log -Type Conf -Evt "File path:.............$HtmlFiles."
+    }
 
-Write-Log -Type Conf -Evt "************ Running with the following config *************."
-Write-Log -Type Conf -Evt "Utility Version:.......22.06.02"
-Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
-Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
-Write-Log -Type Conf -Evt "File path:.............$HtmlFiles."
+    If ($LogPath)
+    {
+        Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
+    }
 
-If ($Null -ne $LogPath)
-{
-    Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
-}
+    If ($Null -ne $LogHistory)
+    {
+        Write-Log -Type Conf -Evt "Logs to keep:..........$LogHistory days."
+    }
 
-If ($MailTo)
-{
-    Write-Log -Type Conf -Evt "E-mail log to:.........$MailTo."
-}
+    If ($MailTo)
+    {
+        Write-Log -Type Conf -Evt "E-mail log to:.........$MailTo."
+    }
 
-If ($MailFrom)
-{
-    Write-Log -Type Conf -Evt "E-mail log from:.......$MailFrom."
-}
+    If ($MailFrom)
+    {
+        Write-Log -Type Conf -Evt "E-mail log from:.......$MailFrom."
+    }
 
-If ($MailSubject)
-{
-    Write-Log -Type Conf -Evt "E-mail subject:........$MailSubject."
-}
+    If ($MailSubject)
+    {
+        Write-Log -Type Conf -Evt "E-mail subject:........$MailSubject."
+    }
 
-If ($SmtpServer)
-{
-    Write-Log -Type Conf -Evt "SMTP server is:........$SmtpServer."
-}
-
-If ($SmtpPort)
-{
-    Write-Log -Type Conf -Evt "SMTP Port:.............$SmtpPort."
-}
-
-If ($SmtpUser)
-{
-    Write-Log -Type Conf -Evt "SMTP user is:..........$SmtpUser."
-}
-
-If ($SmtpPwd)
-{
-    Write-Log -Type Conf -Evt "SMTP pwd file:.........$SmtpPwd."
-}
-
-Write-Log -Type Conf -Evt "-UseSSL switch is:.....$UseSsl."
-Write-Log -Type Conf -Evt "************************************************************"
-Write-Log -Type Info -Evt "Process started"
-
-##
-## Display current config ends here.
-##
-
-## If logging is configured then finish the log file.
-If ($LogPath)
-{
-    ## This whole block is for e-mail, if it is configured.
     If ($SmtpServer)
     {
-        ## Default e-mail subject if none is configured.
-        If ($Null -eq $MailSubject)
+        Write-Log -Type Conf -Evt "SMTP server is:........$SmtpServer."
+    }
+
+    If ($SmtpPort)
+    {
+        Write-Log -Type Conf -Evt "SMTP Port:.............$SmtpPort."
+    }
+
+    If ($SmtpUser)
+    {
+        Write-Log -Type Conf -Evt "SMTP user is:..........$SmtpUser."
+    }
+
+    If ($SmtpPwd)
+    {
+        Write-Log -Type Conf -Evt "SMTP pwd file:.........$SmtpPwd."
+    }
+
+    Write-Log -Type Conf -Evt "-UseSSL switch is:.....$UseSsl."
+    Write-Log -Type Conf -Evt "************************************************************"
+    Write-Log -Type Info -Evt "Process started"
+    ##
+    ## Display current config ends here.
+    ##
+
+    If ($Null -ne $LogHistory)
+    {
+        ## Cleanup logs.
+        Write-Log -Type Info -Evt "Deleting logs older than: $LogHistory days"
+        Get-ChildItem -Path "$LogPath\Email-HTML-Logs_*" -File | Where-Object CreationTime -lt (Get-Date).AddDays(-$LogHistory) | Remove-Item -Recurse
+    }
+
+    ## If logging is configured then finish the log file.
+    If ($LogPath)
+    {
+        ## This whole block is for e-mail, if it is configured.
+        If ($SmtpServer)
         {
-            $MailSubject = "Email HTML Logs Utility"
-        }
-
-        ## Default Smtp Port if none is configured.
-        If ($Null -eq $SmtpPort)
-        {
-            $SmtpPort = "25"
-        }
-
-        ## Setting the contents of the log to be the e-mail body. 
-        $MailBody = Get-Content -Path $HtmlFiles | Out-String
-
-        ## If an smtp password is configured, get the username and password together for authentication.
-        ## If an smtp password is not provided then send the e-mail without authentication and obviously no SSL.
-        If ($SmtpPwd)
-        {
-            $SmtpPwdEncrypt = Get-Content $SmtpPwd | ConvertTo-SecureString
-            $SmtpCreds = New-Object System.Management.Automation.PSCredential -ArgumentList ($SmtpUser, $SmtpPwdEncrypt)
-
-            ## If -ssl switch is used, send the email with SSL.
-            ## If it isn't then don't use SSL, but still authenticate with the credentials.
-            If ($UseSsl)
+            If (Test-Path -Path $Log)
             {
-                Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort -UseSsl -Credential $SmtpCreds
+                ## Default e-mail subject if none is configured.
+                If ($Null -eq $MailSubject)
+                {
+                    $MailSubject = "Email HTML Logs Utility"
+                }
+
+                ## Default Smtp Port if none is configured.
+                If ($Null -eq $SmtpPort)
+                {
+                    $SmtpPort = "25"
+                }
+
+                ## Setting the contents of the log to be the e-mail body. 
+                $MailBody = Get-Content -Path $HtmlFiles | Out-String
+
+                ## If an smtp password is configured, get the username and password together for authentication.
+                ## If an smtp password is not provided then send the e-mail without authentication and obviously no SSL.
+                If ($SmtpPwd)
+                {
+                    $SmtpPwdEncrypt = Get-Content $SmtpPwd | ConvertTo-SecureString
+                    $SmtpCreds = New-Object System.Management.Automation.PSCredential -ArgumentList ($SmtpUser, $SmtpPwdEncrypt)
+
+                    ## If -ssl switch is used, send the email with SSL.
+                    ## If it isn't then don't use SSL, but still authenticate with the credentials.
+                    If ($UseSsl)
+                    {
+                        Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort -UseSsl -Credential $SmtpCreds
+                    }
+
+                    else {
+                        Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort -Credential $SmtpCreds
+                    }
+                }
+
+                else {
+                    Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort
+                }
             }
 
             else {
-                Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort -Credential $SmtpCreds
+                    Write-Host -ForegroundColor Red -BackgroundColor Black -Object "There's no log file(s) to email."
             }
-        }
-
-        else {
-            Send-MailMessage -To $MailTo -From $MailFrom -Subject $MailSubject -Body $MailBody -BodyAsHtml -SmtpServer $SmtpServer -Port $SmtpPort
         }
     }
 }
