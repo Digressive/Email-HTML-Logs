@@ -148,8 +148,8 @@ If ($NoBanner -eq $False)
 If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
     Write-Host -Object "Usage:
-    From a terminal run: [path\]Office-Update.ps1 -Office [path\]Office365 -Config config-365-x64.xml -Days 30
-    This will update the office installation files in the specified directory, and delete update files older than 30 days
+    From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\]*.html
+    This will get log files with the html extension and then email them using the email log function below.
 
     To output a log: -L [path]. To remove logs produced by the utility older than X days: -LogRotate [number].
     Run with no ASCII banner: -NoBanner
@@ -313,20 +313,31 @@ else {
     ## Display current config ends here.
     ##
 
-    If ($Null -ne $LogHistory)
+    If ($HtmlFiles)
     {
-        ## Cleanup logs.
-        Write-Log -Type Info -Evt "Deleting logs older than: $LogHistory days"
-        Get-ChildItem -Path "$LogPath\Email-HTML-Logs_*" -File | Where-Object CreationTime -lt (Get-Date).AddDays(-$LogHistory) | Remove-Item -Recurse
-    }
+        $FileNo = Get-ChildItem -Path $HtmlFiles -File | Measure-Object
 
-    ## If logging is configured then finish the log file.
-    If ($LogPath)
-    {
-        ## This whole block is for e-mail, if it is configured.
-        If ($SmtpServer)
+        If ($FileNo.count -ne 0)
         {
-            If (Test-Path -Path $Log)
+            Write-Log -Type Info -Evt "The following objects will be processed:"
+            Get-ChildItem -Path $HtmlFiles | Select-Object -ExpandProperty Name
+
+            If ($LogPath)
+            {
+                Get-ChildItem -Path $HtmlFiles | Select-Object -ExpandProperty Name | Out-File -Append $Log -Encoding ASCII
+            }
+
+            Write-Log -Type Info -Evt "Process finished."
+
+            If ($Null -ne $LogHistory)
+            {
+                ## Cleanup logs.
+                Write-Log -Type Info -Evt "Deleting logs older than: $LogHistory days"
+                Get-ChildItem -Path "$LogPath\Email-HTML-Logs_*" -File | Where-Object CreationTime -lt (Get-Date).AddDays(-$LogHistory) | Remove-Item -Recurse
+            }
+
+            ## This whole block is for e-mail, if it is configured.
+            If ($SmtpServer)
             {
                 ## Default e-mail subject if none is configured.
                 If ($Null -eq $MailSubject)
@@ -340,7 +351,7 @@ else {
                     $SmtpPort = "25"
                 }
 
-                ## Setting the contents of the log to be the e-mail body. 
+                ## Setting the contents of the log to be the e-mail body.
                 $MailBody = Get-Content -Path $HtmlFiles | Out-String
 
                 ## If an smtp password is configured, get the username and password together for authentication.
@@ -368,9 +379,17 @@ else {
             }
 
             else {
-                    Write-Host -ForegroundColor Red -BackgroundColor Black -Object "There's no log file(s) to email."
+                Write-Log -Type Err -Evt "There is no smtp server configured."
             }
         }
+
+        else {
+            Write-Log -Type Err -Evt "There are no files to process."
+        }
+    }
+
+    else {
+        Write-Log -Type Err -Evt "There are no files configured to process."
     }
 }
 
