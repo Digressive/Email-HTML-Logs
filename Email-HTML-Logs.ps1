@@ -306,7 +306,10 @@ else {
         Write-Log -Type Conf -Evt "SMTP pwd file:.........$SmtpPwd."
     }
 
-    Write-Log -Type Conf -Evt "-UseSSL switch is:.....$UseSsl."
+    If ($SmtpServer)
+    {
+        Write-Log -Type Conf -Evt "-UseSSL switch is:.....$UseSsl."
+    }
     Write-Log -Type Conf -Evt "************************************************************"
     Write-Log -Type Info -Evt "Process started"
     ##
