@@ -99,7 +99,7 @@
 [CmdletBinding()]
 Param(
     [alias("Files")]
-    $HtmlFiles,
+    $HtmlFilesUsr,
     [alias("L")]
     $LogPathUsr,
     [alias("LogRotate")]
@@ -148,8 +148,8 @@ If ($NoBanner -eq $False)
 If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
     Write-Host -Object "Usage:
-    From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\]*.html
-    This will get log files with the html extension and then email them using the email log function below.
+    From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\]
+    This will get log files with the .html extension and then email them using the email log function below.
 
     To output a log: -L [path]. To remove logs produced by the utility older than X days: -LogRotate [number].
     Run with no ASCII banner: -NoBanner
@@ -246,6 +246,17 @@ else {
         }
     }
 
+    If ($Null -eq $HtmlFilesUsr)
+    {
+        Write-Log -Type Err -Evt "You need to specify a directory with -Files."
+        Exit
+    }
+
+    else {
+        ## Clean User entered string
+        $HtmlFiles = $HtmlFilesUsr.trimend('\')
+    }
+
     ## getting Windows Version info
     $OSVMaj = [environment]::OSVersion.Version | Select-Object -expand major
     $OSVMin = [environment]::OSVersion.Version | Select-Object -expand minor
@@ -259,14 +270,14 @@ else {
     Write-Log -Type Conf -Evt "Utility Version:.......22.06.02"
     Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
     Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
-    If ($HtmlFiles)
+    If ($HtmlFilesUsr)
     {
-        Write-Log -Type Conf -Evt "File path:.............$HtmlFiles."
+        Write-Log -Type Conf -Evt "File path:.............$HtmlFilesUsr."
     }
 
     If ($LogPathUsr)
     {
-        Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
+        Write-Log -Type Conf -Evt "Logs directory:........$LogPathUsr."
     }
 
     If ($Null -ne $LogHistory)
@@ -319,18 +330,18 @@ else {
     ## Display current config ends here.
     ##
 
-    If ($HtmlFiles)
+    If ($HtmlFilesUsr)
     {
-        $FileNo = Get-ChildItem -Path $HtmlFiles -File | Measure-Object
+        $FileNo = Get-ChildItem -Path "$HtmlFiles\*.html" -File | Measure-Object
 
         If ($FileNo.count -ne 0)
         {
             Write-Log -Type Info -Evt "The following objects will be processed:"
-            Get-ChildItem -Path $HtmlFiles | Select-Object -ExpandProperty Name
+            Get-ChildItem -Path "$HtmlFiles\*.html" | Select-Object -ExpandProperty Name
 
             If ($LogPathUsr)
             {
-                Get-ChildItem -Path $HtmlFiles | Select-Object -ExpandProperty Name | Out-File -Append $Log -Encoding ASCII
+                Get-ChildItem -Path "$HtmlFiles\*.html" | Select-Object -ExpandProperty Name | Out-File -Append $Log -Encoding ASCII
             }
 
             Write-Log -Type Info -Evt "Process finished."
@@ -358,7 +369,7 @@ else {
                 }
 
                 ## Setting the contents of the log to be the e-mail body.
-                $MailBody = Get-Content -Path $HtmlFiles | Out-String
+                $MailBody = Get-Content -Path "$HtmlFiles\*.html" | Out-String
 
                 ## If an smtp password is configured, get the username and password together for authentication.
                 ## If an smtp password is not provided then send the e-mail without authentication and obviously no SSL.
