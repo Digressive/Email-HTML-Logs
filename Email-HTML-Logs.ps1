@@ -101,12 +101,16 @@ If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
     To use the 'email log' function:
     Specify the subject line with -Subject ""'[subject line]'"" If you leave this blank a default subject will be used
     Make sure to encapsulate it with double & single quotes as per the example for Powershell to read it correctly.
+
     Specify the 'to' address with -SendTo [example@contoso.com]
     For multiple address, separate with a comma.
+
     Specify the 'from' address with -From [example@contoso.com]
     Specify the SMTP server with -Smtp [smtp server name]
+
     Specify the port to use with the SMTP server with -Port [port number].
     If none is specified then the default of 25 will be used.
+
     Specify the user to access SMTP with -User [example@contoso.com]
     Specify the password file to use with -Pwd [path\]ps-script-pwd.txt.
     Use SSL for SMTP server connection with -UseSsl.

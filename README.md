@@ -45,7 +45,7 @@ Here’s a list of all the command line switches and example configurations.
 | Command Line Switch | Description | Example |
 | ------------------- | ----------- | ------- |
 | -Files | The path that contains the HTML files to email. | [path\logs] |
-| -L | The path to output the log file to. The file name will be Email-HTML_YYYY-MM-dd_HH-mm-ss.log. | [path\logs] |
+| -L | The path to output the log file to. | [path\logs] |
 | -LogRotate | Remove logs produced by the utility older than X days | [number] |
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
 | -Help | Display usage information. No arguments also displays help. | N/A |
