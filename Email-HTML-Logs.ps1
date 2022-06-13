@@ -89,10 +89,12 @@ If ($NoBanner -eq $False)
 If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
     Write-Host -Object "Usage:
-    From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\]
-    This will get log files with the .html extension and then email them using the email log function below.
+    From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\logs] -SendTo [example@contoso.com]
+    -From [example@contoso.com] -Smtp [smtp server address]
+    -User [example@contoso.com] -Pwd [path\]ps-script-pwd.txt -UseSsl
+    This will get log files with the .html extension and then email them to the specified address.
 
-    To output a log: -L [path].
+    To output a log: -L [path\logs].
     To remove logs produced by the utility older than X days: -LogRotate [number].
     Run with no ASCII banner: -NoBanner
 
@@ -100,6 +102,7 @@ If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
     Specify the subject line with -Subject ""'[subject line]'"" If you leave this blank a default subject will be used
     Make sure to encapsulate it with double & single quotes as per the example for Powershell to read it correctly.
     Specify the 'to' address with -SendTo [example@contoso.com]
+    For multiple address, separate with a comma.
     Specify the 'from' address with -From [example@contoso.com]
     Specify the SMTP server with -Smtp [smtp server name]
     Specify the port to use with the SMTP server with -Port [port number].
