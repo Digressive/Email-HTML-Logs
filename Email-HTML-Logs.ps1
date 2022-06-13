@@ -34,65 +34,7 @@
 
     .DESCRIPTION
     Sends the contents of HTML files as e-mails.
-
-    To send a log file via e-mail using ssl and an SMTP password you must generate an encrypted password file.
-    The password file is unique to both the user and machine.
-
-    To create the password file run this command as the user and on the machine that will use the file:
-
-    $creds = Get-Credential
-    $creds.Password | ConvertFrom-SecureString | Set-Content C:\scripts\ps-script-pwd.txt
-
-    .PARAMETER Files
-    The root path that contains the files to email, can use wildcards like: C:\foo\logs\*.html.
-
-    .PARAMETER NoBanner
-    Use this option to hide the ASCII art title in the console.
-
-    .PARAMETER L
-    The path to output the log file to.
-    The file name will be Email-HTML_YYYY-MM-dd_HH-mm-ss.log
-    Do not add a trailing \ backslash.
-
-    .PARAMETER LogRotate
-    Instructs the utility to remove logs older than a specified number of days.
-
-    .PARAMETER Help
-    Show usage help in the command line.
-
-    .PARAMETER Subject
-    The subject line for the e-mail log.
-    Encapsulate with single or double quotes.
-    If no subject is specified, the default of "Email HTML Logs Utility" will be used.
-
-    .PARAMETER SendTo
-    The e-mail address the log should be sent to.
-
-    .PARAMETER From
-    The e-mail address the log should be sent from.
-
-    .PARAMETER Smtp
-    The DNS name or IP address of the SMTP server.
-
-    .PARAMETER Port
-    The Port that should be used for the SMTP server.
-
-    .PARAMETER User
-    The user account to authenticate to the SMTP server.
-
-    .PARAMETER Pwd
-    The txt file containing the encrypted password for SMTP authentication.
-
-    .PARAMETER UseSsl
-    Configures the utility to connect to the SMTP server using SSL.
-
-    .EXAMPLE
-    Email-HTML-Logs.ps1 -Files C:\foo\logs\*.html -L C:\scripts\logs -Subject 'Server: HTML Logs' -SendTo me@contoso.com
-    -From HTML-Logs@contoso.com -Smtp smtp.outlook.com -User me@contoso.com -Pwd c:\scripts\ps-script-pwd.txt -UseSsl
-
-    The above command will get log files with the html extension from the folder C:\foo\logs and then email them using an SSL connection.
-    A log file will be output to C:\scripts\logs.
-
+    Run with -help or no arguments for usage.
 #>
 
 ## Set up command line switches.
@@ -144,14 +86,14 @@ If ($NoBanner -eq $False)
 "
 }
 
-
 If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
     Write-Host -Object "Usage:
     From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\]
     This will get log files with the .html extension and then email them using the email log function below.
 
-    To output a log: -L [path]. To remove logs produced by the utility older than X days: -LogRotate [number].
+    To output a log: -L [path].
+    To remove logs produced by the utility older than X days: -LogRotate [number].
     Run with no ASCII banner: -NoBanner
 
     To use the 'email log' function:
