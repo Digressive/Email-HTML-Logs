@@ -89,12 +89,12 @@ If ($NoBanner -eq $False)
 If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
     Write-Host -Object "Usage:
-    From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\logs] -SendTo [example@contoso.com]
+    From a terminal run: [path\]Email-HTML-Logs.ps1 -Files [path\] -SendTo [example@contoso.com]
     -From [example@contoso.com] -Smtp [smtp server address]
     -User [example@contoso.com] -Pwd [path\]ps-script-pwd.txt -UseSsl
     This will get log files with the .html extension and then email them to the specified address.
 
-    To output a log: -L [path\logs].
+    To output a log: -L [path\].
     To remove logs produced by the utility older than X days: -LogRotate [number].
     Run with no ASCII banner: -NoBanner
 

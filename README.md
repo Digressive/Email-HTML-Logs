@@ -44,8 +44,8 @@ Here’s a list of all the command line switches and example configurations.
 
 | Command Line Switch | Description | Example |
 | ------------------- | ----------- | ------- |
-| -Files | The path that contains the HTML files to email. | [path\logs] |
-| -L | The path to output the log file to. | [path\logs] |
+| -Files | The path that contains the HTML files to email. | [path\] |
+| -L | The path to output the log file to. | [path\] |
 | -LogRotate | Remove logs produced by the utility older than X days | [number] |
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
 | -Help | Display usage information. No arguments also displays help. | N/A |
@@ -61,7 +61,7 @@ Here’s a list of all the command line switches and example configurations.
 ## Example
 
 ``` txt
-[path\]Email-HTML-Logs.ps1 -Files [path\logs] -SendTo [example@contoso.com] -From [example@contoso.com] -Smtp [smtp server address] -User [example@contoso.com] -Pwd [path\]ps-script-pwd.txt -UseSsl
+[path\]Email-HTML-Logs.ps1 -Files [path\] -SendTo [example@contoso.com] -From [example@contoso.com] -Smtp [smtp server address] -User [example@contoso.com] -Pwd [path\]ps-script-pwd.txt -UseSsl
 ```
 
 This will get log files with the .html extension and then email them to the specified address.
