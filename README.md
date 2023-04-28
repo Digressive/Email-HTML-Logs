@@ -1,8 +1,6 @@
 # Email HTML Logs Utility
 
-Send HTML logs as e-mail
-
-For full change log and more information, [visit my site.](https://gal.vin/utils)
+## Send HTML logs as e-mail
 
 Email HTML Logs Utility is available from:
 
@@ -16,6 +14,7 @@ Please consider supporting my work:
 
 Please report any problems via the ‘issues’ tab on GitHub.
 
+Thanks
 -Mike
 
 ## Features and Requirements
@@ -23,7 +22,7 @@ Please report any problems via the ‘issues’ tab on GitHub.
 * Send the contents of HTML files as the body in e-mails.
 * Useful for applications that output HTML logs with no e-mail option.
 * The utility requires at least PowerShell 5.0.
-* This utility has been tested on Windows 11, Windows 10, Windows Server 2022, Windows Server 2019, Windows Server 2016 and Windows Server 2012 R2.
+* Tested on Windows 11, Windows 10, Windows Server 2022, Windows Server 2019, Windows Server 2016 and Windows Server 2012 R2.
 
 ## Generating A Password File For SMTP Authentication
 

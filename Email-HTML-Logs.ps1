@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 22.06.02
+.VERSION 23.04.28
 
 .GUID 566309af-d0f7-4bf6-8303-b903553af661
 
@@ -79,7 +79,7 @@ If ($NoBanner -eq $False)
         | |    / _ \ / _  / __| | |  | | __| | | | __| | | |        Mike Galvin      
         | |___| (_) | (_| \__ \ | |__| | |_| | | | |_| |_| |      https://gal.vin    
         |______\___/ \__, |___/  \____/ \__|_|_|_|\__|\__, |                         
-                      __/ |                            __/ |     Version 22.06.02    
+                      __/ |                            __/ |     Version 23.04.28    
                      |___/                            |___/     See -help for usage  
                                                                                      
                        Donate: https://www.paypal.me/digressive                      
@@ -195,6 +195,26 @@ else {
         }
     }
 
+    ## Function for Update Check
+    Function UpdateCheck()
+    {
+        $ScriptVersion = "23.04.28"
+        $RawSource = "https://raw.githubusercontent.com/Digressive/Email-HTML-Logs/master/Email-HTML-Logs.ps1"
+
+        try {
+            $SourceCheck = Invoke-RestMethod -uri "$RawSource"
+            $VerCheck = $SourceCheck -split '\n' | Select-String -Pattern ".VERSION $ScriptVersion" -SimpleMatch -CaseSensitive -Quiet
+
+            If ($VerCheck -ne $True)
+            {
+                Write-Log -Type Conf -Evt "*** There is an update available. ***"
+            }
+        }
+
+        catch {
+        }
+    }
+
     If ($Null -eq $HtmlFilesUsr)
     {
         Write-Log -Type Err -Evt "You need to specify a directory with -Files."
@@ -215,65 +235,51 @@ else {
     ##
     ## Display the current config and log if configured.
     ##
-    Write-Log -Type Conf -Evt "************ Running with the following config *************."
-    Write-Log -Type Conf -Evt "Utility Version:.......22.06.02"
-    Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
-    Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
+    Write-Log -Type Conf -Evt "--- Running with the following config ---"
+    Write-Log -Type Conf -Evt "Utility Version: 23.04.28"
+    UpdateCheck ## Run Update checker function
+    Write-Log -Type Conf -Evt "Hostname: $Env:ComputerName."
+    Write-Log -Type Conf -Evt "Windows Version: $OSV."
     If ($HtmlFilesUsr)
     {
-        Write-Log -Type Conf -Evt "File path:.............$HtmlFilesUsr."
+        Write-Log -Type Conf -Evt "File path: $HtmlFilesUsr."
     }
 
     If ($LogPathUsr)
     {
-        Write-Log -Type Conf -Evt "Logs directory:........$LogPathUsr."
+        Write-Log -Type Conf -Evt "Logs directory: $LogPathUsr."
     }
 
     If ($Null -ne $LogHistory)
     {
-        Write-Log -Type Conf -Evt "Logs to keep:..........$LogHistory days."
+        Write-Log -Type Conf -Evt "Logs to keep: $LogHistory days."
     }
 
     If ($MailTo)
     {
-        Write-Log -Type Conf -Evt "E-mail log to:.........$MailTo."
+        Write-Log -Type Conf -Evt "E-mail log to: $MailTo."
     }
 
     If ($MailFrom)
     {
-        Write-Log -Type Conf -Evt "E-mail log from:.......$MailFrom."
+        Write-Log -Type Conf -Evt "E-mail log from: $MailFrom."
     }
 
     If ($MailSubject)
     {
-        Write-Log -Type Conf -Evt "E-mail subject:........$MailSubject."
+        Write-Log -Type Conf -Evt "E-mail subject: $MailSubject."
     }
 
     If ($SmtpServer)
     {
-        Write-Log -Type Conf -Evt "SMTP server is:........$SmtpServer."
-    }
-
-    If ($SmtpPort)
-    {
-        Write-Log -Type Conf -Evt "SMTP Port:.............$SmtpPort."
+        Write-Log -Type Conf -Evt "SMTP server: Configured."
     }
 
     If ($SmtpUser)
     {
-        Write-Log -Type Conf -Evt "SMTP user is:..........$SmtpUser."
+        Write-Log -Type Conf -Evt "SMTP auth: Configured."
     }
-
-    If ($SmtpPwd)
-    {
-        Write-Log -Type Conf -Evt "SMTP pwd file:.........$SmtpPwd."
-    }
-
-    If ($SmtpServer)
-    {
-        Write-Log -Type Conf -Evt "-UseSSL switch is:.....$UseSsl."
-    }
-    Write-Log -Type Conf -Evt "************************************************************"
+    Write-Log -Type Conf -Evt "---"
     Write-Log -Type Info -Evt "Process started"
     ##
     ## Display current config ends here.
