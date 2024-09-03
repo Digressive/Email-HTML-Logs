@@ -12,7 +12,7 @@
 
 .TAGS Email HTML files logs
 
-.LICENSEURI
+.LICENSEURI https://github.com/Digressive/Email-HTML-Logs?tab=MIT-1-ov-file
 
 .PROJECTURI
 
